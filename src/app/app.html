@@ -1,0 +1,125 @@
+
+<main class="page">
+  <header class="topbar">
+    <div>
+      <h1>CIPL 2026</h1>
+      <p>Employee Participation Registration</p>
+    </div>
+
+    <button
+      *ngIf="loggedIn"
+      class="logout"
+      (click)="logout()">
+      Logout
+    </button>
+  </header>
+
+  <section *ngIf="!loggedIn" class="panel login-panel">
+    <h2>Login</h2>
+
+    <form (ngSubmit)="login()">
+      <label>Username</label>
+      <input
+        name="username"
+        [(ngModel)]="username"
+        required
+        autocomplete="username"
+        placeholder="Enter username">
+
+      <label>Password</label>
+      <input
+        name="password"
+        type="password"
+        [(ngModel)]="password"
+        required
+        autocomplete="current-password"
+        placeholder="Enter password">
+
+      <button class="primary" type="submit">Login</button>
+    </form>
+  </section>
+
+
+
+<div *ngIf="loggedIn" class="count-dashboard">
+
+  <div class="count-card all-card">
+    <span>ALL</span>
+    <strong>{{ allCount }}</strong>
+    <small>Total Employees</small>
+  </div>
+
+  <div class="count-card participated-card">
+    <span>PARTICIPATED</span>
+    <strong>{{ participatedCount }}</strong>
+    <small>Registered Participants</small>
+  </div>
+
+  <div class="count-card not-participated-card">
+    <span>NOT PARTICIPATED</span>
+    <strong>{{ notParticipatedCount }}</strong>
+    <small>Not Yet Participated</small>
+  </div>
+
+</div>
+
+
+  <section *ngIf="loggedIn" class="panel">
+    <h2>Find Employee</h2>
+
+    <form (ngSubmit)="loadMember()" class="search-form">
+      <div class="field">
+        <label>EPF Number</label>
+        <input
+          name="searchEpf"
+          [(ngModel)]="searchEpf"
+          required
+          placeholder="Enter EPF number">
+      </div>
+
+      <button
+  class="primary"
+  type="submit"
+  [disabled]="loading">
+  {{ loading ? 'Loading...' : 'Load Employee' }}
+</button>
+    </form>
+
+    <div *ngIf="member as m" class="details">
+      <h2>Employee Details</h2>
+
+      <div class="detail-row">
+        <span>EPF</span>
+        <strong>{{ m.epf }}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>NIC</span>
+        <strong>{{ m.nic || 'Not available' }}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Team Member</span>
+        <strong>{{ m.teamMember ? 'Yes' : 'No' }}</strong>
+      </div>
+
+      <label class="check-row">
+        <input
+          type="checkbox"
+          name="participated"
+          [(ngModel)]="participated">
+        <span>Participated in CIPL 2026</span>
+      </label>
+
+      <button
+        class="primary"
+        (click)="updateParticipation()"
+        [disabled]="saving">
+        {{ saving ? 'Updating...' : 'Update Participation' }}
+      </button>
+    </div>
+  </section>
+
+  <p *ngIf="message" class="success">{{ message }}</p>
+  <p *ngIf="error" class="error">{{ error }}</p>
+</main>

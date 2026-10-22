@@ -17,6 +17,7 @@ interface Member {
   nic: string;
   participated: boolean;
   teamMember: boolean;
+   registered: boolean;
   id?: string;
 }
 
@@ -156,7 +157,8 @@ async loadCounts() {
     epf: String(data['epf'] ?? ''),
     nic: String(data['nic'] ?? ''),
     participated: data['participated'] === true,
-    teamMember: data['teamMember'] === true
+    teamMember: data['teamMember'] === true,
+    registered: data['registered'] === true,
   };
 
   this.participated = this.member.participated;

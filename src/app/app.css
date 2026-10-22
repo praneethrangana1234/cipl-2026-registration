@@ -268,4 +268,12 @@ form > .primary,
   .count-card strong {
     font-size: 28px;
   }
+
+  .registered-yes {
+  color: #15803d;
+}
+
+.registered-no {
+  color: #dc2626;
+}
 }

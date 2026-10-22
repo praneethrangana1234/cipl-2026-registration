@@ -103,6 +103,16 @@
         <strong>{{ m.teamMember ? 'Yes' : 'No' }}</strong>
       </div>
 
+<div class="detail-row">
+  <span>Registration Status</span>
+  <strong [class.registered-yes]="m.registered"
+          [class.registered-no]="!m.registered">
+    {{ m.registered ? 'Registered' : 'Not Registered' }}
+  </strong>
+</div>
+
+
+
       <label class="check-row">
         <input
           type="checkbox"

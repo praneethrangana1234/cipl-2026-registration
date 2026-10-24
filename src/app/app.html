@@ -1,5 +1,6 @@
 
 <main class="page">
+  <!-- Header -->
   <header class="topbar">
     <div>
       <h1>CIPL 2026</h1>
@@ -9,25 +10,29 @@
     <button
       *ngIf="loggedIn"
       class="logout"
+      type="button"
       (click)="logout()">
       Logout
     </button>
   </header>
 
+  <!-- Login Form -->
   <section *ngIf="!loggedIn" class="panel login-panel">
     <h2>Login</h2>
 
     <form (ngSubmit)="login()">
-      <label>Username</label>
+      <label for="username">Username</label>
       <input
+        id="username"
         name="username"
         [(ngModel)]="username"
         required
         autocomplete="username"
         placeholder="Enter username">
 
-      <label>Password</label>
+      <label for="password">Password</label>
       <input
+        id="password"
         name="password"
         type="password"
         [(ngModel)]="password"
@@ -35,42 +40,152 @@
         autocomplete="current-password"
         placeholder="Enter password">
 
-      <button class="primary" type="submit">Login</button>
+      <div class="login-actions">
+        <button class="primary" type="submit">
+          Login
+        </button>
+
+        <button
+          class="secondary"
+          type="button"
+          (click)="openImportForm()">
+          Excel / CSV Upload
+        </button>
+      </div>
     </form>
   </section>
 
+  <!-- Bulk CSV Import Form -->
+  <section *ngIf="showImportForm" class="panel import-panel">
+    <h2>Bulk Employee Registration</h2>
 
+    <p>
+      Select a CSV file containing EPF, Name and NIC.
+      Review the employee details before saving to Firebase.
+    </p>
 
-<div *ngIf="loggedIn" class="count-dashboard">
+    <label for="csvFile">Choose CSV File</label>
 
-  <div class="count-card all-card">
-    <span>ALL</span>
-    <strong>{{ allCount }}</strong>
-    <small>Total Employees</small>
+    <input
+      id="csvFile"
+      type="file"
+      accept=".csv,text/csv"
+      (change)="onCsvSelected($event)">
+
+    <p *ngIf="csvFileName" class="file-name">
+      Selected file: {{ csvFileName }}
+    </p>
+
+    <!-- Import Success / Information -->
+    <p *ngIf="importMessage" class="success">
+      {{ importMessage }}
+    </p>
+
+    <!-- Import Errors -->
+    <p *ngIf="importError" class="error">
+      {{ importError }}
+    </p>
+
+    <!-- CSV Preview Table -->
+    <div
+      *ngIf="importRows.length > 0"
+      class="table-wrapper">
+
+      <table>
+        <thead>
+          <tr>
+            <th>EPF</th>
+            <th>Name</th>
+            <th>NIC</th>
+            <th>Participated</th>
+            <th>Team Member</th>
+            <th>Registered</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let row of importRows">
+            <td>{{ row.epf }}</td>
+            <td>{{ row.fname }}</td>
+            <td>{{ row.nic }}</td>
+            <td>{{ row.participated ? 'Yes' : 'No' }}</td>
+            <td>{{ row.teamMember ? 'Yes' : 'No' }}</td>
+            <td>{{ row.registered ? 'Yes' : 'No' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Import Actions -->
+    <div class="import-actions">
+      <button
+        class="primary"
+        type="button"
+        (click)="saveImportToFirebase()"
+        [disabled]="
+          importLoading ||
+          importRows.length === 0 ||
+          !loggedIn
+        ">
+        {{ importLoading ? 'Saving...' : 'Save to Firebase' }}
+      </button>
+
+      <button
+        class="secondary"
+        type="button"
+        (click)="openImportForm()">
+        Close
+      </button>
+    </div>
+
+    <p *ngIf="!loggedIn" class="error">
+      Please log in before saving employee records.
+    </p>
+  </section>
+
+  <!-- Employee Count Dashboard -->
+  <div *ngIf="loggedIn" class="count-dashboard">
+
+    <div class="count-card all-card">
+      <span>ALL</span>
+      <strong>{{ allCount }}</strong>
+      <small>Total Employees</small>
+    </div>
+
+    <div class="count-card participated-card">
+      <span>PARTICIPATED</span>
+      <strong>{{ participatedCount }}</strong>
+      <small>Registered Participants</small>
+    </div>
+
+    <div class="count-card not-participated-card">
+      <span>NOT PARTICIPATED</span>
+      <strong>{{ notParticipatedCount }}</strong>
+      <small>Not Yet Participated</small>
+    </div>
+
   </div>
 
-  <div class="count-card participated-card">
-    <span>PARTICIPATED</span>
-    <strong>{{ participatedCount }}</strong>
-    <small>Registered Participants</small>
-  </div>
-
-  <div class="count-card not-participated-card">
-    <span>NOT PARTICIPATED</span>
-    <strong>{{ notParticipatedCount }}</strong>
-    <small>Not Yet Participated</small>
-  </div>
-
-</div>
 
 
+
+
+
+
+
+  <!-- Find Employee -->
   <section *ngIf="loggedIn" class="panel">
     <h2>Find Employee</h2>
 
-    <form (ngSubmit)="loadMember()" class="search-form">
+    <form
+      (ngSubmit)="loadMember()"
+      class="search-form">
+
       <div class="field">
-        <label>EPF Number</label>
+        <label for="searchEpf">EPF Number</label>
+
         <input
+          id="searchEpf"
           name="searchEpf"
           [(ngModel)]="searchEpf"
           required
@@ -78,19 +193,25 @@
       </div>
 
       <button
-  class="primary"
-  type="submit"
-  [disabled]="loading">
-  {{ loading ? 'Loading...' : 'Load Employee' }}
-</button>
+        class="primary"
+        type="submit"
+        [disabled]="loading">
+        {{ loading ? 'Loading...' : 'Load Employee' }}
+      </button>
     </form>
 
+    <!-- Employee Details -->
     <div *ngIf="member as m" class="details">
       <h2>Employee Details</h2>
 
       <div class="detail-row">
         <span>EPF</span>
         <strong>{{ m.epf }}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>NAME</span>
+        <strong>{{ m.fname }}</strong>
       </div>
 
       <div class="detail-row">
@@ -103,26 +224,29 @@
         <strong>{{ m.teamMember ? 'Yes' : 'No' }}</strong>
       </div>
 
-<div class="detail-row">
-  <span>Registration Status</span>
-  <strong [class.registered-yes]="m.registered"
+      <div class="detail-row">
+        <span>Registration Status</span>
+
+        <strong
+          [class.registered-yes]="m.registered"
           [class.registered-no]="!m.registered">
-    {{ m.registered ? 'Registered' : 'Not Registered' }}
-  </strong>
-</div>
+          {{ m.registered ? 'Registered' : 'Not Registered' }}
+        </strong>
+      </div>
 
-
-
+      <!-- Participation Checkbox -->
       <label class="check-row">
         <input
           type="checkbox"
           name="participated"
           [(ngModel)]="participated">
+
         <span>Participated in CIPL 2026</span>
       </label>
 
       <button
         class="primary"
+        type="button"
         (click)="updateParticipation()"
         [disabled]="saving">
         {{ saving ? 'Updating...' : 'Update Participation' }}
@@ -130,6 +254,33 @@
     </div>
   </section>
 
-  <p *ngIf="message" class="success">{{ message }}</p>
-  <p *ngIf="error" class="error">{{ error }}</p>
+
+<section *ngIf="loggedIn" class="panel">
+  <h2>Employee Participation Report</h2>
+
+  <p>
+    Export all Firebase employee records to Excel.
+    Participated employees will appear first.
+  </p>
+
+  <button
+    class="primary"
+    type="button"
+    (click)="exportExcel()">
+    Download Excel Report
+  </button>
+</section>
+
+
+
+
+  <!-- General Messages -->
+  <p *ngIf="message" class="success">
+    {{ message }}
+  </p>
+
+  <p *ngIf="error" class="error">
+    {{ error }}
+  </p>
+
 </main>

@@ -277,3 +277,76 @@ form > .primary,
   color: #dc2626;
 }
 }
+.login-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.login-actions button {
+  width: 100%;
+  margin: 0;
+}
+
+.secondary {
+  background: #e8eee9;
+  color: #244532;
+}
+
+.import-panel input[type="file"] {
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.file-name {
+  overflow-wrap: anywhere;
+  color: #637168;
+  font-size: 14px;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin: 20px 0;
+  border: 1px solid #e4eae6;
+  border-radius: 8px;
+}
+
+.table-wrapper table {
+  width: 100%;
+  min-width: 650px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table-wrapper th,
+.table-wrapper td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e4eae6;
+  white-space: nowrap;
+}
+
+.table-wrapper th {
+  background: #f3f6f4;
+  color: #244532;
+}
+
+.import-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.import-actions button {
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .import-panel {
+    padding: 14px;
+  }
+}
